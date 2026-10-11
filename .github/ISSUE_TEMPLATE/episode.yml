@@ -1,0 +1,60 @@
+name: Day（動画1本）
+description: 1 Day = 1 PR = 1本の動画。その回の親になる Issue。
+title: "DayNN: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **この Issue は PR が閉じる。** ユースケースや疑問は、この Issue の子（sub-issue）にする。
+        Milestone「DayNN 題」も付ける。手順は [CONTRIBUTING.md](../blob/main/CONTRIBUTING.md) の 1。
+
+  - type: dropdown
+    id: stage
+    attributes:
+      label: 段
+      options:
+        - Why
+        - イベントストーミング
+        - BDD
+        - DDD
+        - TDD（縦切り）
+        - 足場
+        - そのほか
+    validations:
+      required: true
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: この回で答える問い
+      description: 1〜2行。動画のタイトルの元になる。
+      placeholder: 送迎の当日までに、何が起きるかを全部並べると何が見えるか
+    validations:
+      required: true
+
+  - type: textarea
+    id: previous
+    attributes:
+      label: 前回の宿題
+      description: 開いている question Issue のうち、この回で扱うもの。無ければ「なし」。
+      placeholder: |
+        - #12 積み込み時間は人ごとに違う？
+    validations:
+      required: true
+
+  - type: textarea
+    id: done
+    attributes:
+      label: 終わりの判定
+      description: 何ができていれば、この回を閉じてよいか。
+      placeholder: |
+        - Big Picture のイベントが時系列に並んでいる
+        - Hotspot がすべて question Issue になっている
+    validations:
+      required: true
+
+  - type: textarea
+    id: show
+    attributes:
+      label: 動画で見せたいこと（あれば）
+      placeholder: 付箋を並べたら「再計算」のポリシーが浮かび上がる場面

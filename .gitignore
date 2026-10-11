@@ -1,0 +1,21 @@
+# --- Node ---
+node_modules/
+dist/
+coverage/
+
+# --- 秘密 ---
+# Google Maps の鍵など。このリポジトリは公開している。
+.env
+.env.*
+!.env.example
+
+# --- 動画の書き出し ---
+# PDF と mp4 は重いので入れない。台本とスライドの元だけ入れる。
+docs/episodes/**/out/
+
+# --- 使い捨て ---
+# TDD の素振りなど、履歴に残さない実験場。使い終わったら消す。
+sandbox/
+
+# --- Mac ---
+.DS_Store
