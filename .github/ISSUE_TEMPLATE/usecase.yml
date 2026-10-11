@@ -1,0 +1,105 @@
+name: ユースケース
+description: 「誰が何をしたいか」を1件登録する。実装の単位はこれ。
+title: "[UC] "
+labels: ["usecase"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **このテンプレートの狙いは「例」を必ず書かせることです。**
+
+        「適切に」「いい感じに」「必要に応じて」で合意すると、実装したあとで
+        解釈のずれが出ます。具体例に落とすと、**ずれがいま出ます。**
+
+        書き方は [docs/README.md](../blob/main/docs/README.md) の 5 と 6 を見てください。
+
+  - type: input
+    id: usecase
+    attributes:
+      label: ユースケース名
+      description: 「誰が」「何をしたいか」の形で書く。画面やボタンの名前は使わない。
+      placeholder: 運転者が送迎計画を作る
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: なぜ必要か（ペイン）
+      description: いま何に困っているか。**これが書けないなら作らない。**
+      placeholder: |
+        いまは LINE で一人ずつ住所を聞いて Google Map に手で打ち込んでいる。
+        人数が増えるほど打ち間違いが増え、時間もかかる。
+    validations:
+      required: true
+
+  - type: textarea
+    id: rules
+    attributes:
+      label: ルール（受け入れ条件）
+      description: このユースケースが守るべきこと。1行1件。
+      placeholder: |
+        - 出発時刻は到着希望時刻から逆算する
+        - 各地点で積み込み時間を取る（既定5分。出発点と目的地では取らない）
+        - 同乗者が0人でも成立する
+        - 到着希望時刻が過去なら作れない
+    validations:
+      required: true
+
+  - type: textarea
+    id: examples
+    attributes:
+      label: 例（前提 / もし / ならば）
+      description: >
+        各ルールに例を1つ以上。**必ず具体的な数字を入れる。**
+        「適切な時刻が出る」は例になっていない。「6:20 と出る」まで書く。
+        境界（0人のとき、上限を超えたとき）も例にする。
+      placeholder: |
+        ### 同乗者がいないとき
+        前提 出発点から目的地までの所要時間は 40分 である
+        もし 運転者が到着希望時刻を 7:00 として送迎計画を作る
+        ならば 出発時刻は 6:20 になる
+
+        ### 同乗者が1人いるとき
+        前提 出発点から A さんの家までの所要時間は 10分 である
+        かつ A さんの家から目的地までの所要時間は 30分 である
+        もし 運転者が到着希望時刻を 7:00 として送迎計画を作る
+        ならば 出発時刻は 6:15 になる
+        かつ A さんの家に 6:25 に着き 6:30 に出る
+    validations:
+      required: true
+
+  - type: textarea
+    id: questions
+    attributes:
+      label: 疑問（消さずに残す）
+      description: >
+        答えが出ていないこと。**誰に聞けば答えが出るかも書く。**
+        ここを空にして進めると、どちらか片方の解釈が黙って実装される。
+      placeholder: |
+        - Google が落ちていたら何を返すか（→ 自分で決める）
+        - 何日先まで渋滞予測が取れるか（→ Google の資料を確認）
+        - 積み込み時間は同乗者ごとに変えられるべきか（→ 使ってみて決める）
+
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: この Issue でやらないこと
+      description: 範囲を先に切る。ここに書いたものは別 Issue にする。
+      placeholder: |
+        - 復路の計画
+        - 割り勘の計算
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: 出す前の確認
+      options:
+        - label: すべてのルールに例が1つ以上ついている（例が0のルールは、まだ誰も理解していない）
+          required: true
+        - label: 例に具体的な数字が入っている
+          required: true
+        - label: 画面やボタンの名前ではなく、振る舞いの言葉で書いている
+          required: true
+        - label: 例に出てくる言葉は用語表（event-storming/glossary.md）にある
+          required: false

@@ -1,0 +1,52 @@
+name: 不具合
+description: 期待と違う動きを報告する。
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **不具合の直し方も TDD で進めます。**
+        まず「落ちるテスト」を書いて再現させ、それを通す形で直します。
+        だから下の「再現手順」と「期待した動き」が、そのままテストになります。
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待した動き
+      description: 具体的な数字で書く。
+      placeholder: 到着希望 7:00、所要 40分 なら 出発 6:20 と出るはず
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: 実際の動き
+      placeholder: 6:15 と出た（積み込み5分が余分に引かれている）
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 再現手順
+      description: 入力した値をそのまま書く。
+      placeholder: |
+        1. 出発点に「木更津駅」、目的地に「〇〇カントリークラブ」を入れる
+        2. 到着希望時刻に 7:00 を入れる
+        3. 同乗者は登録しない
+    validations:
+      required: true
+
+  - type: input
+    id: where
+    attributes:
+      label: どこで起きたか
+      placeholder: ローカル / 本番 / CI。ブラウザや端末があれば添える
+
+  - type: textarea
+    id: guess
+    attributes:
+      label: 原因の見当（あれば）
+      description: 分からなければ空でよい。
