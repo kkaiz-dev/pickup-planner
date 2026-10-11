@@ -1,7 +1,6 @@
 name: 不具合
 description: 期待と違う動きを報告する。
 title: "[BUG] "
-labels: ["bug"]
 body:
   - type: markdown
     attributes:

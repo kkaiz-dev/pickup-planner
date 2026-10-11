@@ -23,12 +23,13 @@
 
 そのうえで：
 
-- **1 Day = 1 PR = 1本の動画。** Day は Milestone と親 Issue（`episode`）で表す。
-- ユースケース（`usecase`）と疑問（`question`）は、親 Issue の子にする。
+- **1 Day = 1 PR = 1本の動画。** Day は Milestone と親 Issue（タイトル `DayNN:`）で表す。
+- ユースケース（`[UC]`）と疑問（`[Q]`）は、親 Issue の子にする。
 - Issue のフォームで、**ルールと例を必須入力にする。**
 - **1人でも PR を必ず通す。** CI を PR で回し、`Closes #N` で Issue と結ぶ。
 - PR に「決めたこと／捨てたこと／次回の宿題」を書く。**これが台本の骨になる。**
-- ラベルは6つだけ（`episode` / `usecase` / `question` / `bug` / `chore` / `adr-needed`）。
+- Issue の種類はタイトルの接頭辞で分かるので、ラベルは**タイトルで分からない状態**にだけ付ける。
+  `question` と `adr-needed` の2つだけ。
 - 議論は Issue、結論は ADR。双方向にリンクする。
 
 手順の詳細は `CONTRIBUTING.md`。

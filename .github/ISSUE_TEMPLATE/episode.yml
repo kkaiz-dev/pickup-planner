@@ -1,7 +1,6 @@
 name: Day（動画1本）
 description: 1 Day = 1 PR = 1本の動画。その回の親になる Issue。
 title: "DayNN: "
-labels: ["episode"]
 body:
   - type: markdown
     attributes:

@@ -34,28 +34,25 @@ PR を出す（「決めたこと／捨てたこと／次回の宿題」を埋�
 
 ```
 Milestone: Day04 BDD
-  └─ Issue「Day04: 送迎計画のシナリオを書く」   label: episode   ← PR はこれを閉じる
-       ├─ sub-issue「運転者が送迎計画を作る」     label: usecase
-       └─ sub-issue「積み込み時間は人ごとに違う？」 label: question
+  └─ Issue「DayNN: 送迎計画のシナリオを書く」      ← タイトルの DayNN で分かる。PR はこれを閉じる
+       ├─ sub-issue「[UC] 運転者が送迎計画を作る」
+       └─ sub-issue「[Q] 積み込み時間は人ごとに違う？」 label: question
 ```
 
-- **Day の Issue（`episode`）が親。** PR は `Closes #N` でこれを閉じる。
+- **Day の親 Issue** は Milestone とタイトルの `DayNN:` で分かる。ラベルは付けない。PR は `Closes #N` でこれを閉じる。
 - ユースケースや疑問は**子**（GitHub の sub-issue）にする。Day をまたいで開いていてよい。
 - テンプレートは4種類（`episode` / `usecase` / `question` / `bug`）。
-  **フォームの必須欄が要件の質を担保する。**
+  **フォームの必須欄が要件の質を担保する。種類は作成時のタイトル接頭辞（`DayNN:` `[UC]` `[Q]` `[BUG]`）で分かるので、
+  種類そのものにはラベルを付けない。**
 
 ### ラベル
 
-増やすと使われなくなる。この6つだけ。
+**タイトルで分からない「状態」にだけ付ける。** この2つだけ。
 
 | ラベル | 意味 |
 |---|---|
-| `episode` | Day の親 Issue。1本の動画になる |
-| `usecase` | 新しいユースケース |
-| `question` | **答えが出ていないこと**（Hotspot、Example Mapping の赤） |
-| `bug` | 期待と違う動き |
-| `chore` | 足場・設定・依存の更新 |
-| `adr-needed` | **覆すのが高い判断が絡む。実装前に ADR を書く** |
+| `question` | **答えが出ていないこと**（Hotspot、Example Mapping の赤）。どの種類の Issue にも付きうる |
+| `adr-needed` | **覆すのが高い判断が絡む。実装前に ADR を書く**。議論の途中で気づいて付ける |
 
 - **疑問は消さずに `question` で残す。** 答えが出たら、答えを書いて閉じる。
   覆すのが高い答えなら ADR に移す。

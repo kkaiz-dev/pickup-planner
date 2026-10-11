@@ -1,7 +1,6 @@
 name: ユースケース
 description: 「誰が何をしたいか」を1件登録する。実装の単位はこれ。
 title: "[UC] "
-labels: ["usecase"]
 body:
   - type: markdown
     attributes:
