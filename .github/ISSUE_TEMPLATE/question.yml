@@ -1,0 +1,43 @@
+name: 疑問（Hotspot）
+description: 答えが出ていないことを、消さずに残す。
+title: "[Q] "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **疑問を消してから進むと、どちらか片方の解釈が黙って実装される。**
+        答えが出たら、答えをコメントに書いて閉じる。覆すのが高い答えなら ADR に移す。
+
+  - type: textarea
+    id: question
+    attributes:
+      label: 疑問
+      placeholder: 積み込み時間は同乗者ごとに変えられるべきか
+    validations:
+      required: true
+
+  - type: input
+    id: where
+    attributes:
+      label: どこで出たか
+      placeholder: Day02 イベントストーミング「同乗者を乗せた」の付近
+    validations:
+      required: true
+
+  - type: textarea
+    id: who
+    attributes:
+      label: 誰に聞けば答えが出るか
+      description: 人、資料、または「使ってみて決める」。
+      placeholder: 実際の同乗者（次のラウンドで聞く）
+    validations:
+      required: true
+
+  - type: textarea
+    id: options
+    attributes:
+      label: 考えられる答え（あれば）
+      placeholder: |
+        - 全員 5分で固定
+        - 同乗者が自分で入れる
