@@ -8,10 +8,20 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "start:dev": "tsx watch src/main.ts"
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
+    "tsx": "^4.23.15",
     "typescript": "^5.7.0",
     "vitest": "^5.0.5"
+  },
+  "dependencies": {
+    "@nestjs/common": "^12.2.0",
+    "@nestjs/core": "^12.2.0",
+    "@nestjs/platform-express": "^12.2.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2"
   }
 }
