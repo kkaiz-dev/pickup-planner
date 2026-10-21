@@ -29,6 +29,42 @@ export function createPlan(params: {
   };
 }
 
+// 以下、計画を変更する操作。すべて新しい Plan を返す（元の Plan は変えない）。
+// 地点が変わったら計算し直す、というポリシー（event-storming/process-level.md）の実行は
+// usecase 層の役目。ここでは「変わった後の Plan」を作るところまで。
+
+export function addPickupPoint(plan: Plan, point: PickupPoint): Plan {
+  return { ...plan, pickupPoints: [...plan.pickupPoints, point] };
+}
+
+export function changePickupPointLocation(
+  plan: Plan,
+  pickupPointId: string,
+  newLocation: Location,
+): Plan {
+  return {
+    ...plan,
+    pickupPoints: plan.pickupPoints.map((p) =>
+      p.id === pickupPointId ? { ...p, location: newLocation } : p,
+    ),
+  };
+}
+
+export function removePickupPoint(plan: Plan, pickupPointId: string): Plan {
+  return {
+    ...plan,
+    pickupPoints: plan.pickupPoints.filter((p) => p.id !== pickupPointId),
+  };
+}
+
+export function changeOrigin(plan: Plan, newOrigin: Location): Plan {
+  return { ...plan, origin: newOrigin };
+}
+
+export function changeDestination(plan: Plan, newDestination: Location): Plan {
+  return { ...plan, destination: newDestination };
+}
+
 function permutations<T>(items: readonly T[]): T[][] {
   if (items.length <= 1) return [items.slice()];
   const result: T[][] = [];
