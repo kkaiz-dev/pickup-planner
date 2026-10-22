@@ -6,18 +6,19 @@ import type { PlanRecord, PlanRepositoryPort } from "./plan-repository";
 
 // event-storming/process-level.md のポリシーをここで実行する。
 // 「計画ができたら／地点が変わったら／出発地・目的地が変わったら、計算し直す」。
+// 経路見積りポートが非同期のため、ここも非同期。
 export type Dependencies = {
   repository: PlanRepositoryPort;
   routeEstimator: RouteEstimatorPort;
   generateId: () => string;
 };
 
-export function createPlanUseCase(
+export async function createPlanUseCase(
   deps: Dependencies,
   input: { origin: Location; destination: Location; desiredArrivalTime: Plan["desiredArrivalTime"] },
-): PlanRecord {
+): Promise<PlanRecord> {
   const plan = createPlan(input);
-  const itinerary = calculateItinerary(plan, deps.routeEstimator);
+  const itinerary = await calculateItinerary(plan, deps.routeEstimator);
   const record: PlanRecord = { id: deps.generateId(), plan, itinerary };
   deps.repository.save(record);
   return record;
@@ -35,16 +36,24 @@ function requireRecord(deps: Dependencies, id: string): PlanRecord {
   return record;
 }
 
-function recalculateAndSave(deps: Dependencies, id: string, mutate: (plan: Plan) => Plan): PlanRecord {
+async function recalculateAndSave(
+  deps: Dependencies,
+  id: string,
+  mutate: (plan: Plan) => Plan,
+): Promise<PlanRecord> {
   const existing = requireRecord(deps, id);
   const plan = mutate(existing.plan);
-  const itinerary = calculateItinerary(plan, deps.routeEstimator);
+  const itinerary = await calculateItinerary(plan, deps.routeEstimator);
   const record: PlanRecord = { id, plan, itinerary };
   deps.repository.save(record);
   return record;
 }
 
-export function addPickupPointUseCase(deps: Dependencies, id: string, point: PickupPoint): PlanRecord {
+export function addPickupPointUseCase(
+  deps: Dependencies,
+  id: string,
+  point: PickupPoint,
+): Promise<PlanRecord> {
   return recalculateAndSave(deps, id, (plan) => addPickupPointToPlan(plan, point));
 }
 
@@ -53,17 +62,25 @@ export function changePickupPointLocationUseCase(
   id: string,
   pickupPointId: string,
   newLocation: Location,
-): PlanRecord {
+): Promise<PlanRecord> {
   return recalculateAndSave(deps, id, (plan) =>
     changePickupPointLocation(plan, pickupPointId, newLocation),
   );
 }
 
-export function removePickupPointUseCase(deps: Dependencies, id: string, pickupPointId: string): PlanRecord {
+export function removePickupPointUseCase(
+  deps: Dependencies,
+  id: string,
+  pickupPointId: string,
+): Promise<PlanRecord> {
   return recalculateAndSave(deps, id, (plan) => removePickupPoint(plan, pickupPointId));
 }
 
-export function changeOriginUseCase(deps: Dependencies, id: string, newOrigin: Location): PlanRecord {
+export function changeOriginUseCase(
+  deps: Dependencies,
+  id: string,
+  newOrigin: Location,
+): Promise<PlanRecord> {
   return recalculateAndSave(deps, id, (plan) => changeOrigin(plan, newOrigin));
 }
 
@@ -71,6 +88,6 @@ export function changeDestinationUseCase(
   deps: Dependencies,
   id: string,
   newDestination: Location,
-): PlanRecord {
+): Promise<PlanRecord> {
   return recalculateAndSave(deps, id, (plan) => changeDestination(plan, newDestination));
 }

@@ -10,7 +10,7 @@ import type { RouteEstimatorPort } from "./route-estimator";
 
 function fakeEstimator(table: Record<string, number>): RouteEstimatorPort {
   return {
-    estimateTravelTime(from, to) {
+    async estimateTravelTime(from, to) {
       const key = `${from.label}->${to.label}`;
       const minutes = table[key];
       if (minutes === undefined) {
@@ -22,7 +22,7 @@ function fakeEstimator(table: Record<string, number>): RouteEstimatorPort {
 }
 
 describe("運転者が送迎計画を作る", () => {
-  it("同乗者がいないとき、到着希望時刻から出発時刻を逆算する", () => {
+  it("同乗者がいないとき、到着希望時刻から出発時刻を逆算する", async () => {
     // 前提 出発地から目的地までの所要時間は 40分 である
     const origin = location("出発地");
     const destination = location("目的地");
@@ -34,13 +34,13 @@ describe("運転者が送迎計画を作る", () => {
       destination,
       desiredArrivalTime: clockTime(7, 0),
     });
-    const itinerary = calculateItinerary(plan, estimator);
+    const itinerary = await calculateItinerary(plan, estimator);
 
     // ならば 出発時刻は 6:20 になる
     expect(formatClockTime(itinerary.stops[0]!.departure)).toBe("06:20");
   });
 
-  it("同乗者が1人いるとき、お迎えの順番と各地点の時刻が決まる", () => {
+  it("同乗者が1人いるとき、お迎えの順番と各地点の時刻が決まる", async () => {
     // 前提 出発地から Aさんの家 までの所要時間は 10分 である
     // かつ Aさんの家 から目的地までの所要時間は 30分 である
     const origin = location("出発地");
@@ -58,7 +58,7 @@ describe("運転者が送迎計画を作る", () => {
       desiredArrivalTime: clockTime(7, 0),
       pickupPoints: [pickupPoint("p1", a)],
     });
-    const itinerary = calculateItinerary(plan, estimator);
+    const itinerary = await calculateItinerary(plan, estimator);
 
     // ならば お迎えの順番は 出発地、Aさんの家、目的地 の順になる
     expect(itinerary.stops.map((s) => s.location.label)).toEqual([
@@ -73,7 +73,7 @@ describe("運転者が送迎計画を作る", () => {
     expect(formatClockTime(itinerary.stops[1]!.departure)).toBe("06:30");
   });
 
-  it("同乗者が2人いて、順番によって所要時間が変わるとき、短い方の順番が選ばれる", () => {
+  it("同乗者が2人いて、順番によって所要時間が変わるとき、短い方の順番が選ばれる", async () => {
     const origin = location("出発地");
     const destination = location("目的地");
     const a = location("Aさんの家");
@@ -95,7 +95,7 @@ describe("運転者が送迎計画を作る", () => {
       desiredArrivalTime: clockTime(7, 0),
       pickupPoints: [pickupPoint("p1", a), pickupPoint("p2", b)],
     });
-    const itinerary = calculateItinerary(plan, estimator);
+    const itinerary = await calculateItinerary(plan, estimator);
 
     // ならば お迎えの順番は 出発地、Aさんの家、Bさんの家、目的地 の順になる
     expect(itinerary.stops.map((s) => s.location.label)).toEqual([
@@ -106,7 +106,7 @@ describe("運転者が送迎計画を作る", () => {
     ]);
   });
 
-  it("同乗者が0人でも計画は成立する", () => {
+  it("同乗者が0人でも計画は成立する", async () => {
     // docs/design/02-how.md の不変条件
     const plan = createPlan({
       origin: location("出発地"),
