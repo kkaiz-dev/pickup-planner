@@ -4,6 +4,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:3000
 
 export type ItineraryStop = {
   location: string;
+  name: string | null;
   arrival: string | null;
   departure: string;
 };
@@ -13,7 +14,7 @@ export type PlanView = {
   origin: string;
   destination: string;
   desiredArrivalTime: string;
-  pickupPoints: { id: string; location: string }[];
+  pickupPoints: { id: string; name: string; location: string }[];
   itinerary: ItineraryStop[];
 };
 
@@ -40,11 +41,11 @@ export function getPlan(id: string): Promise<PlanView> {
   return request(`/plans/${id}`);
 }
 
-export function addPickupPoint(planId: string, location: string): Promise<PlanView> {
+export function addPickupPoint(planId: string, name: string, location: string): Promise<PlanView> {
   const id = crypto.randomUUID();
   return request(`/plans/${planId}/pickup-points`, {
     method: "POST",
-    body: JSON.stringify({ id, location }),
+    body: JSON.stringify({ id, name, location }),
   });
 }
 

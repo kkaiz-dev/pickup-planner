@@ -37,15 +37,15 @@ export function addPickupPoint(plan: Plan, point: PickupPoint): Plan {
   return { ...plan, pickupPoints: [...plan.pickupPoints, point] };
 }
 
-export function changePickupPointLocation(
+export function changePickupPoint(
   plan: Plan,
   pickupPointId: string,
-  newLocation: Location,
+  updates: { name?: string; location?: Location },
 ): Plan {
   return {
     ...plan,
     pickupPoints: plan.pickupPoints.map((p) =>
-      p.id === pickupPointId ? { ...p, location: newLocation } : p,
+      p.id === pickupPointId ? { ...p, ...updates } : p,
     ),
   };
 }
@@ -116,7 +116,7 @@ async function buildStops(
   estimator: RouteEstimatorPort,
 ): Promise<ItineraryStop[]> {
   const stops: ItineraryStop[] = [
-    { location: plan.origin, arrival: null, departure: originDeparture },
+    { location: plan.origin, name: null, arrival: null, departure: originDeparture },
   ];
 
   let previousLocation = plan.origin;
@@ -125,14 +125,14 @@ async function buildStops(
     const travelMinutes = await estimator.estimateTravelTime(previousLocation, point.location);
     const arrival = addMinutes(currentTime, travelMinutes);
     const departure = addMinutes(arrival, BOARDING_DURATION_MINUTES);
-    stops.push({ location: point.location, arrival, departure });
+    stops.push({ location: point.location, name: point.name, arrival, departure });
     currentTime = departure;
     previousLocation = point.location;
   }
 
   const travelToDestination = await estimator.estimateTravelTime(previousLocation, plan.destination);
   const destinationArrival = addMinutes(currentTime, travelToDestination);
-  stops.push({ location: plan.destination, arrival: destinationArrival, departure: destinationArrival });
+  stops.push({ location: plan.destination, name: null, arrival: destinationArrival, departure: destinationArrival });
 
   return stops;
 }

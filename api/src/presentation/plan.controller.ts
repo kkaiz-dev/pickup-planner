@@ -28,10 +28,12 @@ function serialize(record: PlanRecord) {
     desiredArrivalTime: formatClockTime(record.plan.desiredArrivalTime),
     pickupPoints: record.plan.pickupPoints.map((p) => ({
       id: p.id,
+      name: p.name,
       location: p.location.label,
     })),
     itinerary: record.itinerary.stops.map((s) => ({
       location: s.location.label,
+      name: s.name,
       arrival: s.arrival ? formatClockTime(s.arrival) : null,
       departure: formatClockTime(s.departure),
     })),
@@ -68,10 +70,14 @@ export class PlanController {
   }
 
   @Post(":id/pickup-points")
-  async addPickupPoint(@Param("id") id: string, @Body() body: { id: string; location: string }) {
+  async addPickupPoint(
+    @Param("id") id: string,
+    @Body() body: { id: string; name: string; location: string },
+  ) {
     findOrThrow(this.planService, id);
     const record = await this.planService.addPickupPoint(id, {
       id: body.id,
+      name: body.name,
       location: location(body.location),
     });
     return serialize(record);
@@ -81,10 +87,13 @@ export class PlanController {
   async changePickupPoint(
     @Param("id") id: string,
     @Param("pointId") pointId: string,
-    @Body() body: { location: string },
+    @Body() body: { name?: string; location?: string },
   ) {
     findOrThrow(this.planService, id);
-    const record = await this.planService.changePickupPointLocation(id, pointId, location(body.location));
+    const record = await this.planService.changePickupPoint(id, pointId, {
+      name: body.name,
+      location: body.location ? location(body.location) : undefined,
+    });
     return serialize(record);
   }
 

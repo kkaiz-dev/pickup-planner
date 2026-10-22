@@ -56,7 +56,7 @@ describe("運転者が送迎計画を作る", () => {
       origin,
       destination,
       desiredArrivalTime: clockTime(7, 0),
-      pickupPoints: [pickupPoint("p1", a)],
+      pickupPoints: [pickupPoint("p1", "Aさん", a)],
     });
     const itinerary = await calculateItinerary(plan, estimator);
 
@@ -93,7 +93,7 @@ describe("運転者が送迎計画を作る", () => {
       origin,
       destination,
       desiredArrivalTime: clockTime(7, 0),
-      pickupPoints: [pickupPoint("p1", a), pickupPoint("p2", b)],
+      pickupPoints: [pickupPoint("p1", "Aさん", a), pickupPoint("p2", "Bさん", b)],
     });
     const itinerary = await calculateItinerary(plan, estimator);
 

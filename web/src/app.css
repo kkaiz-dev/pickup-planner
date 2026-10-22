@@ -13,6 +13,11 @@ main {
   margin: 0 auto;
 }
 
+/* 計画作成フォームは狭いまま、計画の画面（地図が横に出る）は広げる */
+main:has(.layout) {
+  max-width: 900px;
+}
+
 h1 {
   font-size: 1.4rem;
 }
