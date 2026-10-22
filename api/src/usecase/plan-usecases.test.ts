@@ -26,8 +26,8 @@ function inMemoryRepository(): PlanRepositoryPort {
 }
 
 function fakeEstimator(minutes: number): RouteEstimatorPort {
-  // Day8では見積りの中身は問わない。固定値を返すだけ（本物はDay9以降）。
-  return { estimateTravelTime: () => minutes };
+  // Day8では見積りの中身は問わない。固定値を返すだけ（本物はDay10で足す）。
+  return { estimateTravelTime: async () => minutes };
 }
 
 function deps() {
@@ -42,9 +42,9 @@ function deps() {
 }
 
 describe("計画のusecase", () => {
-  it("計画を作ると、保存されて取得できる", () => {
+  it("計画を作ると、保存されて取得できる", async () => {
     const d = deps();
-    const created = createPlanUseCase(d, {
+    const created = await createPlanUseCase(d, {
       origin: location("出発地"),
       destination: location("目的地"),
       desiredArrivalTime: clockTime(7, 0),
@@ -59,15 +59,15 @@ describe("計画のusecase", () => {
     ]);
   });
 
-  it("地点を追加すると、保存された計画が更新される", () => {
+  it("地点を追加すると、保存された計画が更新される", async () => {
     const d = deps();
-    const created = createPlanUseCase(d, {
+    const created = await createPlanUseCase(d, {
       origin: location("出発地"),
       destination: location("目的地"),
       desiredArrivalTime: clockTime(7, 0),
     });
 
-    const updated = addPickupPointUseCase(d, created.id, {
+    const updated = await addPickupPointUseCase(d, created.id, {
       id: "p1",
       location: location("Aさんの家"),
     });
@@ -80,16 +80,16 @@ describe("計画のusecase", () => {
     expect(getPlanUseCase(d, created.id)).toEqual(updated);
   });
 
-  it("地点の変更・取消・出発地/目的地の変更も、保存された計画に反映される", () => {
+  it("地点の変更・取消・出発地/目的地の変更も、保存された計画に反映される", async () => {
     const d = deps();
-    const created = createPlanUseCase(d, {
+    const created = await createPlanUseCase(d, {
       origin: location("出発地"),
       destination: location("目的地"),
       desiredArrivalTime: clockTime(7, 0),
     });
-    addPickupPointUseCase(d, created.id, { id: "p1", location: location("Aさんの家") });
+    await addPickupPointUseCase(d, created.id, { id: "p1", location: location("Aさんの家") });
 
-    const changed = changePickupPointLocationUseCase(
+    const changed = await changePickupPointLocationUseCase(
       d,
       created.id,
       "p1",
@@ -97,13 +97,13 @@ describe("計画のusecase", () => {
     );
     expect(changed.plan.pickupPoints[0]!.location.label).toBe("Aさんの新しい家");
 
-    const removed = removePickupPointUseCase(d, created.id, "p1");
+    const removed = await removePickupPointUseCase(d, created.id, "p1");
     expect(removed.plan.pickupPoints).toHaveLength(0);
 
-    const originChanged = changeOriginUseCase(d, created.id, location("新しい出発地"));
+    const originChanged = await changeOriginUseCase(d, created.id, location("新しい出発地"));
     expect(originChanged.plan.origin.label).toBe("新しい出発地");
 
-    const destinationChanged = changeDestinationUseCase(d, created.id, location("新しい目的地"));
+    const destinationChanged = await changeDestinationUseCase(d, created.id, location("新しい目的地"));
     expect(destinationChanged.plan.destination.label).toBe("新しい目的地");
   });
 });

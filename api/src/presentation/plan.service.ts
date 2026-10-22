@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { Injectable } from "@nestjs/common";
 import { inMemoryPlanRepository } from "../infra/in-memory-plan-repository";
-import { stubRouteEstimator } from "../infra/stub-route-estimator";
+import { routeEstimatorFromEnv } from "../infra/route-estimator-factory";
 import * as useCase from "../usecase/plan-usecases";
 import type { Location } from "../domain/location";
 import type { ClockTime } from "../domain/clock-time";
@@ -13,7 +13,7 @@ import type { PickupPoint } from "../domain/pickup-point";
 export class PlanService {
   private readonly deps: useCase.Dependencies = {
     repository: inMemoryPlanRepository(),
-    routeEstimator: stubRouteEstimator(),
+    routeEstimator: routeEstimatorFromEnv(),
     generateId: () => randomUUID(),
   };
 

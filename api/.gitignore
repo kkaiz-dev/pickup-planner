@@ -1,2 +1,7 @@
 node_modules/
 dist/
+
+# 秘密。.env.example だけコミットする
+.env
+.env.*
+!.env.example

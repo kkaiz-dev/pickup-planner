@@ -5,6 +5,6 @@ import type { RouteEstimatorPort } from "../domain/route-estimator";
 // （docs/design/02-how.md の「経路見積りポート」）。
 export function stubRouteEstimator(): RouteEstimatorPort {
   return {
-    estimateTravelTime: () => 15,
+    estimateTravelTime: async () => 15,
   };
 }

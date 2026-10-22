@@ -15,7 +15,7 @@ import type { RouteEstimatorPort } from "./route-estimator";
 
 function fakeEstimator(table: Record<string, number>): RouteEstimatorPort {
   return {
-    estimateTravelTime(from, to) {
+    async estimateTravelTime(from, to) {
       const key = `${from.label}->${to.label}`;
       const minutes = table[key];
       if (minutes === undefined) {
@@ -28,7 +28,7 @@ function fakeEstimator(table: Record<string, number>): RouteEstimatorPort {
 
 // features/pickup-points.feature
 describe("同乗者が拾ってもらう地点を管理する", () => {
-  it("地点を追加すると、お迎えの順番に含まれる", () => {
+  it("地点を追加すると、お迎えの順番に含まれる", async () => {
     const origin = location("出発地");
     const destination = location("目的地");
     const a = location("Aさんの家");
@@ -39,7 +39,7 @@ describe("同乗者が拾ってもらう地点を管理する", () => {
 
     const plan = createPlan({ origin, destination, desiredArrivalTime: clockTime(7, 0) });
     const updated = addPickupPoint(plan, pickupPoint("p1", a));
-    const itinerary = calculateItinerary(updated, estimator);
+    const itinerary = await calculateItinerary(updated, estimator);
 
     expect(itinerary.stops.map((s) => s.location.label)).toEqual([
       "出発地",
@@ -48,7 +48,7 @@ describe("同乗者が拾ってもらう地点を管理する", () => {
     ]);
   });
 
-  it("地点を変更すると、新しい場所に置き換わる", () => {
+  it("地点を変更すると、新しい場所に置き換わる", async () => {
     const origin = location("出発地");
     const destination = location("目的地");
     const a = location("Aさんの家");
@@ -65,14 +65,14 @@ describe("同乗者が拾ってもらう地点を管理する", () => {
       pickupPoints: [pickupPoint("p1", a)],
     });
     const updated = changePickupPointLocation(plan, "p1", newA);
-    const itinerary = calculateItinerary(updated, estimator);
+    const itinerary = await calculateItinerary(updated, estimator);
 
     const labels = itinerary.stops.map((s) => s.location.label);
     expect(labels).toContain("Aさんの新しい家");
     expect(labels).not.toContain("Aさんの家");
   });
 
-  it("地点を取り消すと、お迎えの順番から消える", () => {
+  it("地点を取り消すと、お迎えの順番から消える", async () => {
     const origin = location("出発地");
     const destination = location("目的地");
     const a = location("Aさんの家");
@@ -89,7 +89,7 @@ describe("同乗者が拾ってもらう地点を管理する", () => {
       pickupPoints: [pickupPoint("p1", a), pickupPoint("p2", b)],
     });
     const updated = removePickupPoint(plan, "p1");
-    const itinerary = calculateItinerary(updated, estimator);
+    const itinerary = await calculateItinerary(updated, estimator);
 
     const labels = itinerary.stops.map((s) => s.location.label);
     expect(labels).not.toContain("Aさんの家");
@@ -99,7 +99,7 @@ describe("同乗者が拾ってもらう地点を管理する", () => {
 
 // features/change-plan.feature
 describe("運転者が計画の出発地・目的地を変える", () => {
-  it("出発地を変更すると、計画の出発地が置き換わる", () => {
+  it("出発地を変更すると、計画の出発地が置き換わる", async () => {
     const plan = createPlan({
       origin: location("出発地"),
       destination: location("目的地"),
@@ -111,7 +111,7 @@ describe("運転者が計画の出発地・目的地を変える", () => {
     expect(updated.origin.label).toBe("新しい出発地");
   });
 
-  it("目的地を変更すると、計画の目的地が置き換わる", () => {
+  it("目的地を変更すると、計画の目的地が置き換わる", async () => {
     const plan = createPlan({
       origin: location("出発地"),
       destination: location("目的地"),

@@ -53,8 +53,8 @@ export class PlanController {
   constructor(@Inject(PlanService) private readonly planService: PlanService) {}
 
   @Post()
-  create(@Body() body: { origin: string; destination: string; desiredArrivalTime: string }) {
-    const record = this.planService.create({
+  async create(@Body() body: { origin: string; destination: string; desiredArrivalTime: string }) {
+    const record = await this.planService.create({
       origin: location(body.origin),
       destination: location(body.destination),
       desiredArrivalTime: parseClockTime(body.desiredArrivalTime),
@@ -68,9 +68,9 @@ export class PlanController {
   }
 
   @Post(":id/pickup-points")
-  addPickupPoint(@Param("id") id: string, @Body() body: { id: string; location: string }) {
+  async addPickupPoint(@Param("id") id: string, @Body() body: { id: string; location: string }) {
     findOrThrow(this.planService, id);
-    const record = this.planService.addPickupPoint(id, {
+    const record = await this.planService.addPickupPoint(id, {
       id: body.id,
       location: location(body.location),
     });
@@ -78,34 +78,34 @@ export class PlanController {
   }
 
   @Patch(":id/pickup-points/:pointId")
-  changePickupPoint(
+  async changePickupPoint(
     @Param("id") id: string,
     @Param("pointId") pointId: string,
     @Body() body: { location: string },
   ) {
     findOrThrow(this.planService, id);
-    const record = this.planService.changePickupPointLocation(id, pointId, location(body.location));
+    const record = await this.planService.changePickupPointLocation(id, pointId, location(body.location));
     return serialize(record);
   }
 
   @Delete(":id/pickup-points/:pointId")
-  removePickupPoint(@Param("id") id: string, @Param("pointId") pointId: string) {
+  async removePickupPoint(@Param("id") id: string, @Param("pointId") pointId: string) {
     findOrThrow(this.planService, id);
-    const record = this.planService.removePickupPoint(id, pointId);
+    const record = await this.planService.removePickupPoint(id, pointId);
     return serialize(record);
   }
 
   @Patch(":id/origin")
-  changeOrigin(@Param("id") id: string, @Body() body: { location: string }) {
+  async changeOrigin(@Param("id") id: string, @Body() body: { location: string }) {
     findOrThrow(this.planService, id);
-    const record = this.planService.changeOrigin(id, location(body.location));
+    const record = await this.planService.changeOrigin(id, location(body.location));
     return serialize(record);
   }
 
   @Patch(":id/destination")
-  changeDestination(@Param("id") id: string, @Body() body: { location: string }) {
+  async changeDestination(@Param("id") id: string, @Body() body: { location: string }) {
     findOrThrow(this.planService, id);
-    const record = this.planService.changeDestination(id, location(body.location));
+    const record = await this.planService.changeDestination(id, location(body.location));
     return serialize(record);
   }
 }

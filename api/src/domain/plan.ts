@@ -77,30 +77,30 @@ function permutations<T>(items: readonly T[]): T[][] {
   return result;
 }
 
-function totalMinutesFor(
+async function totalMinutesFor(
   origin: Location,
   destination: Location,
   order: readonly PickupPoint[],
   estimator: RouteEstimatorPort,
-): number {
+): Promise<number> {
   const legs: Location[] = [origin, ...order.map((p) => p.location), destination];
   let minutes = 0;
   for (let i = 0; i < legs.length - 1; i++) {
-    minutes += estimator.estimateTravelTime(legs[i]!, legs[i + 1]!);
+    minutes += await estimator.estimateTravelTime(legs[i]!, legs[i + 1]!);
   }
   minutes += order.length * BOARDING_DURATION_MINUTES;
   return minutes;
 }
 
-function bestOrder(
+async function bestOrder(
   origin: Location,
   destination: Location,
   pickupPoints: readonly PickupPoint[],
   estimator: RouteEstimatorPort,
-): { order: readonly PickupPoint[]; totalMinutes: number } {
+): Promise<{ order: readonly PickupPoint[]; totalMinutes: number }> {
   let best: { order: readonly PickupPoint[]; totalMinutes: number } | undefined;
   for (const order of permutations(pickupPoints)) {
-    const totalMinutes = totalMinutesFor(origin, destination, order, estimator);
+    const totalMinutes = await totalMinutesFor(origin, destination, order, estimator);
     if (!best || totalMinutes < best.totalMinutes) {
       best = { order, totalMinutes };
     }
@@ -109,12 +109,12 @@ function bestOrder(
   return best!;
 }
 
-function buildStops(
+async function buildStops(
   plan: Plan,
   order: readonly PickupPoint[],
   originDeparture: ClockTime,
   estimator: RouteEstimatorPort,
-): ItineraryStop[] {
+): Promise<ItineraryStop[]> {
   const stops: ItineraryStop[] = [
     { location: plan.origin, arrival: null, departure: originDeparture },
   ];
@@ -122,7 +122,7 @@ function buildStops(
   let previousLocation = plan.origin;
   let currentTime = originDeparture;
   for (const point of order) {
-    const travelMinutes = estimator.estimateTravelTime(previousLocation, point.location);
+    const travelMinutes = await estimator.estimateTravelTime(previousLocation, point.location);
     const arrival = addMinutes(currentTime, travelMinutes);
     const departure = addMinutes(arrival, BOARDING_DURATION_MINUTES);
     stops.push({ location: point.location, arrival, departure });
@@ -130,7 +130,7 @@ function buildStops(
     previousLocation = point.location;
   }
 
-  const travelToDestination = estimator.estimateTravelTime(previousLocation, plan.destination);
+  const travelToDestination = await estimator.estimateTravelTime(previousLocation, plan.destination);
   const destinationArrival = addMinutes(currentTime, travelToDestination);
   stops.push({ location: plan.destination, arrival: destinationArrival, departure: destinationArrival });
 
@@ -138,14 +138,15 @@ function buildStops(
 }
 
 // docs/design/02-how.md の「行程を計算する」の擬似コードをそのまま実装したもの。
-export function calculateItinerary(plan: Plan, estimator: RouteEstimatorPort): Itinerary {
-  const { order, totalMinutes } = bestOrder(
+// 経路見積りポートがHTTP呼び出し（非同期）になるため、ここも非同期。
+export async function calculateItinerary(plan: Plan, estimator: RouteEstimatorPort): Promise<Itinerary> {
+  const { order, totalMinutes } = await bestOrder(
     plan.origin,
     plan.destination,
     plan.pickupPoints,
     estimator,
   );
   const originDeparture = subtractMinutes(plan.desiredArrivalTime, totalMinutes);
-  const stops = buildStops(plan, order, originDeparture, estimator);
+  const stops = await buildStops(plan, order, originDeparture, estimator);
   return { stops };
 }
