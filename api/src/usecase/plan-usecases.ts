@@ -1,4 +1,4 @@
-import { calculateItinerary, changeDestination, changeOrigin, changePickupPointLocation, createPlan, removePickupPoint, addPickupPoint as addPickupPointToPlan, type Plan } from "../domain/plan";
+import { calculateItinerary, changeDestination, changeOrigin, changePickupPoint, createPlan, removePickupPoint, addPickupPoint as addPickupPointToPlan, type Plan } from "../domain/plan";
 import type { Location } from "../domain/location";
 import type { PickupPoint } from "../domain/pickup-point";
 import type { RouteEstimatorPort } from "../domain/route-estimator";
@@ -57,14 +57,14 @@ export function addPickupPointUseCase(
   return recalculateAndSave(deps, id, (plan) => addPickupPointToPlan(plan, point));
 }
 
-export function changePickupPointLocationUseCase(
+export function changePickupPointUseCase(
   deps: Dependencies,
   id: string,
   pickupPointId: string,
-  newLocation: Location,
+  updates: { name?: string; location?: Location },
 ): Promise<PlanRecord> {
   return recalculateAndSave(deps, id, (plan) =>
-    changePickupPointLocation(plan, pickupPointId, newLocation),
+    changePickupPoint(plan, pickupPointId, updates),
   );
 }
 

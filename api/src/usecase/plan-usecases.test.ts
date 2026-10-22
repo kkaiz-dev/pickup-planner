@@ -7,7 +7,7 @@ import {
   addPickupPointUseCase,
   changeDestinationUseCase,
   changeOriginUseCase,
-  changePickupPointLocationUseCase,
+  changePickupPointUseCase,
   createPlanUseCase,
   getPlanUseCase,
   removePickupPointUseCase,
@@ -69,6 +69,7 @@ describe("計画のusecase", () => {
 
     const updated = await addPickupPointUseCase(d, created.id, {
       id: "p1",
+      name: "Aさん",
       location: location("Aさんの家"),
     });
 
@@ -87,14 +88,11 @@ describe("計画のusecase", () => {
       destination: location("目的地"),
       desiredArrivalTime: clockTime(7, 0),
     });
-    await addPickupPointUseCase(d, created.id, { id: "p1", location: location("Aさんの家") });
+    await addPickupPointUseCase(d, created.id, { id: "p1", name: "Aさん", location: location("Aさんの家") });
 
-    const changed = await changePickupPointLocationUseCase(
-      d,
-      created.id,
-      "p1",
-      location("Aさんの新しい家"),
-    );
+    const changed = await changePickupPointUseCase(d, created.id, "p1", {
+      location: location("Aさんの新しい家"),
+    });
     expect(changed.plan.pickupPoints[0]!.location.label).toBe("Aさんの新しい家");
 
     const removed = await removePickupPointUseCase(d, created.id, "p1");

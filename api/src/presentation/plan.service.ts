@@ -29,8 +29,8 @@ export class PlanService {
     return useCase.addPickupPointUseCase(this.deps, id, point);
   }
 
-  changePickupPointLocation(id: string, pickupPointId: string, newLocation: Location) {
-    return useCase.changePickupPointLocationUseCase(this.deps, id, pickupPointId, newLocation);
+  changePickupPoint(id: string, pickupPointId: string, updates: { name?: string; location?: Location }) {
+    return useCase.changePickupPointUseCase(this.deps, id, pickupPointId, updates);
   }
 
   removePickupPoint(id: string, pickupPointId: string) {

@@ -7,7 +7,7 @@ import {
   calculateItinerary,
   changeDestination,
   changeOrigin,
-  changePickupPointLocation,
+  changePickupPoint,
   createPlan,
   removePickupPoint,
 } from "./plan";
@@ -38,7 +38,7 @@ describe("同乗者が拾ってもらう地点を管理する", () => {
     });
 
     const plan = createPlan({ origin, destination, desiredArrivalTime: clockTime(7, 0) });
-    const updated = addPickupPoint(plan, pickupPoint("p1", a));
+    const updated = addPickupPoint(plan, pickupPoint("p1", "Aさん", a));
     const itinerary = await calculateItinerary(updated, estimator);
 
     expect(itinerary.stops.map((s) => s.location.label)).toEqual([
@@ -62,9 +62,9 @@ describe("同乗者が拾ってもらう地点を管理する", () => {
       origin,
       destination,
       desiredArrivalTime: clockTime(7, 0),
-      pickupPoints: [pickupPoint("p1", a)],
+      pickupPoints: [pickupPoint("p1", "Aさん", a)],
     });
-    const updated = changePickupPointLocation(plan, "p1", newA);
+    const updated = changePickupPoint(plan, "p1", { location: newA });
     const itinerary = await calculateItinerary(updated, estimator);
 
     const labels = itinerary.stops.map((s) => s.location.label);
@@ -86,7 +86,7 @@ describe("同乗者が拾ってもらう地点を管理する", () => {
       origin,
       destination,
       desiredArrivalTime: clockTime(7, 0),
-      pickupPoints: [pickupPoint("p1", a), pickupPoint("p2", b)],
+      pickupPoints: [pickupPoint("p1", "Aさん", a), pickupPoint("p2", "Bさん", b)],
     });
     const updated = removePickupPoint(plan, "p1");
     const itinerary = await calculateItinerary(updated, estimator);
