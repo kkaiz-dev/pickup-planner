@@ -1,6 +1,6 @@
 // api/src/presentation/plan.controller.ts の形にそのまま対応する、薄いクライアント。
-// Day9では開発機のAPIを直接見る。デプロイ時の切り替えは、あとで考える。
-const API_BASE_URL = "http://localhost:3000";
+// VITE_API_BASE_URL が無ければ、開発機のAPIを直接見る。
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:3000";
 
 export type ItineraryStop = {
   location: string;
