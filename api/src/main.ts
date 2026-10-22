@@ -5,7 +5,9 @@ import { AppModule } from "./presentation/app.module";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors(); // web/（別ポート、別オリジン）から呼べるようにする
+  // FRONTEND_URL があればそこだけ許可する。無ければ全許可（開発・まだURLが無い段階）。
+  const frontendUrl = process.env.FRONTEND_URL;
+  app.enableCors({ origin: frontendUrl ?? true });
   const port = process.env.PORT ?? 3000;
   await app.listen(port);
   // eslint-disable-next-line no-console
